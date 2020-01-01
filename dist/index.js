@@ -461,8 +461,7 @@ function (_React$Component) {
 
       var estimate = _lodash["default"].get(profile, 'estimate.data.consensusEPS', null);
 
-      var earningsData = _lodash["default"].get(profile, 'earnings.data', []);
-
+      var earningsData = JSON.parse(JSON.stringify(_lodash["default"].get(profile, 'earnings.data', []))).reverse();
       var earningsDataAndEstimate = earningsData.concat([{
         fiscalPeriod: 'est',
         consensusEPS: estimate

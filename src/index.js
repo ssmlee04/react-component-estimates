@@ -383,7 +383,7 @@ export class Analyst extends React.Component {
     };
 
     const estimate = _.get(profile, 'estimate.data.consensusEPS', null);
-    const earningsData = _.get(profile, 'earnings.data', []);
+    const earningsData = JSON.parse(JSON.stringify(_.get(profile, 'earnings.data', []))).reverse();
     const earningsDataAndEstimate = earningsData.concat([{ fiscalPeriod: 'est', consensusEPS: estimate }]);
 
     const lineData = {
