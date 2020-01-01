@@ -57,6 +57,28 @@ var formatNumber = function formatNumber(number) {
   return number;
 };
 
+var formatNumber2 = function formatNumber2(number) {
+  var toFix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+
+  if (number < 0) {
+    return '-' + formatNumber(-number, toFix);
+  }
+
+  if (number > 1000000000) {
+    return (number / 1000000000).toFixed(toFix) + ' b';
+  }
+
+  if (number > 1000000) {
+    return (number / 1000000).toFixed(toFix) + ' m';
+  }
+
+  if (number > 1000) {
+    return (number / 1000).toFixed(toFix) + ' k';
+  }
+
+  return number;
+};
+
 var calculateMargins = function calculateMargins(data) {
   var divider = 1000000;
   var unit = 'million';
@@ -276,7 +298,7 @@ function (_React$Component) {
               fontSize: 10,
               fontColor: 'orange',
               callback: function callback(label, index, labels) {
-                return formatNumber(label, 0);
+                return formatNumber2(label, 0);
               }
             }
           }, {
@@ -341,7 +363,7 @@ function (_React$Component) {
               fontSize: 10,
               fontColor: 'orange',
               callback: function callback(label, index, labels) {
-                return formatNumber(label, 0);
+                return formatNumber2(label, 0);
               }
             }
           }, {
@@ -367,7 +389,7 @@ function (_React$Component) {
           return d.year;
         }),
         datasets: [{
-          label: "Earnings  (".concat(unit, ")"),
+          label: "Earnings",
           type: 'line',
           fill: false,
           lineTension: 0,
@@ -417,7 +439,7 @@ function (_React$Component) {
         datasets: [{
           type: 'line',
           fill: false,
-          label: "Earnings  (".concat(unit, ")"),
+          label: "Earnings",
           lineTension: 0,
           borderWidth: 0,
           backgroundColor: 'orange',

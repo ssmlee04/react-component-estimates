@@ -20,6 +20,22 @@ const formatNumber = (number, toFix = 2) => {
   return number;
 };
 
+const formatNumber2 = (number, toFix = 2) => {
+  if (number < 0) {
+    return '-' + formatNumber(-number, toFix);
+  }
+  if (number > 1000000000) {
+    return (number/1000000000).toFixed(toFix)+' b';
+  }
+  if (number > 1000000) {
+    return (number/1000000).toFixed(toFix)+' m';
+  }
+  if (number > 1000) {
+    return (number/1000).toFixed(toFix)+' k';
+  }
+  return number;
+};
+
 const calculateMargins = (data) => {
   let divider = 1000000;
   let unit = 'million';
@@ -201,7 +217,7 @@ export class Analyst extends React.Component {
               fontSize: 10,
                 fontColor: 'orange',
                 callback: function(label, index, labels) {
-                  return formatNumber(label, 0);
+                  return formatNumber2(label, 0);
                 }
             },
           },
@@ -266,7 +282,7 @@ export class Analyst extends React.Component {
               fontSize: 10,
                 fontColor: 'orange',
                 callback: function(label, index, labels) {
-                  return formatNumber(label, 0);
+                  return formatNumber2(label, 0);
                 }
             },
           },
@@ -294,7 +310,7 @@ export class Analyst extends React.Component {
       labels: yearly.map(d => d.year),
       datasets: [
         {
-          label: `Earnings  (${unit})`,
+          label: `Earnings`,
           type:'line',
           fill: false,
           lineTension: 0,
@@ -342,7 +358,7 @@ export class Analyst extends React.Component {
         {
           type:'line',
           fill: false,
-          label: `Earnings  (${unit})`,
+          label: `Earnings`,
           lineTension: 0,
           borderWidth: 0,
           backgroundColor: 'orange',
