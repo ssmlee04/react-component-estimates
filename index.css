@@ -1,0 +1,17 @@
+div.react-components-show-button {
+    position: relative;
+}
+div.react-components-show-button:hover img{
+    opacity: 0.8;
+}
+div.react-components-show-button:hover button {
+    display: block;
+}
+div.react-components-show-button button {
+    position: absolute;
+    display: none;
+}
+div.react-components-show-button button.react-components-show-url {
+    top: 2px;
+    right: 2px;
+}
