@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import './../index.css';
 
@@ -25,13 +25,13 @@ const formatNumber2 = (number, toFix = 2) => {
     return '-' + formatNumber(-number, toFix);
   }
   if (number > 1000000000) {
-    return (number/1000000000).toFixed(toFix)+' b';
+    return (number/1000000000).toFixed(toFix);
   }
   if (number > 1000000) {
-    return (number/1000000).toFixed(toFix)+' m';
+    return (number/1000000).toFixed(toFix);
   }
   if (number > 1000) {
-    return (number/1000).toFixed(toFix)+' k';
+    return (number/1000).toFixed(toFix);
   }
   return number;
 };
@@ -315,7 +315,7 @@ export class Analyst extends React.Component {
       labels: yearly.map(d => d.year),
       datasets: [
         {
-          label: `Earnings`,
+          label: `Yearly Earnings (${unit})`,
           type:'line',
           fill: false,
           lineTension: 0,
@@ -336,7 +336,7 @@ export class Analyst extends React.Component {
           data: yearly.map(d => d.ni)
         },
         {
-          label: `Revenue (${unit})`,
+          label: `Annual Revenue (${unit})`,
           type:'bar',
           lineTension: 0,
           backgroundColor: '#368BC1',
@@ -357,62 +357,18 @@ export class Analyst extends React.Component {
       ]
     };
 
-    const quarterlyData = {
-      labels: quarterly.map(d => d.reportDate),
-      datasets: [
-        {
-          type:'line',
-          fill: false,
-          label: `Earnings`,
-          lineTension: 0,
-          borderWidth: 0,
-          backgroundColor: 'orange',
-          borderColor: 'orange',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'earnings',
-          data: quarterly.map(d => d.ni)
-        },
-        {
-          type:'bar',
-          label: `Revenue (${unit})`,
-          lineTension: 0,
-          backgroundColor: '#368BC1',
-          borderColor: '#368BC1',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'revenue',
-          data: quarterly.map(d => d.rev)
-        },
-      ]
-    };
-
     const estimate = _.get(profile, 'estimate.data.consensusEPS', null);
     const earningsData = JSON.parse(JSON.stringify(_.get(profile, 'earnings.data', []))).reverse();
     const earningsDataAndEstimate = earningsData.concat([{ fiscalPeriod: 'est', consensusEPS: estimate }]);
 
-    const lineData = {
+    const quarterlyData = {
+      // labels: quarterly.map(d => d.reportDate),
       labels: earningsDataAndEstimate.map(d => d.fiscalPeriod),
       datasets: [
         {
           label: 'Actual EPS',
           fill: false,
+          type:'line',
           lineTension: 0,
           borderWidth: 1,
           backgroundColor: 'orange',
@@ -436,6 +392,7 @@ export class Analyst extends React.Component {
         {
           label: 'Estimate EPS',
           fill: false,
+          type:'line',
           lineTension: 0,
           borderWidth: 1,
           backgroundColor: 'rgba(175,14,14,1)',
@@ -456,44 +413,35 @@ export class Analyst extends React.Component {
           pointHitRadius: 20,
           data: earningsDataAndEstimate.map(d => d.consensusEPS)
         },
-
+        {
+          label: `Revenue (${unit})`,
+          type:'bar',
+          lineTension: 0,
+          backgroundColor: '#368BC1',
+          borderColor: '#368BC1',
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: 'miter',
+          pointBorderColor: 'gray',
+          pointBackgroundColor: 'white',
+          pointBorderWidth: 2,
+          pointHoverRadius: 5,
+          pointHoverBorderWidth: 2,
+          pointRadius: 2,
+          pointHitRadius: 6,
+          yAxisID: 'revenue',
+          data: quarterly.slice(0, earningsDataAndEstimate.length - 1).map(d => d.rev)
+        },
       ]
-    };
-
-    const optionsEstm = {
-      legend: {
-        labels: {
-          fontSize: 12,
-          boxWidth: 12,
-        }
-      },
-      scales: {
-        xAxes: [ { ticks: {
-          fontSize: 10
-        } } ],
-
-        yAxes: [
-          {
-            ticks: {
-              fontSize: 10,
-                callback: function(label, index, labels) {
-                  return formatNumber(label, 0);
-                }
-            },
-          }
-        ]
-      }
     };
 
     return (
       <div style={{ width: '100%', padding: 5, fontSize: 14 }}>
         <div style={{ color: 'darkred', fontWeight: 'bold' }}>{profile.ticker} - {profile.name}</div>
-        {earningsData ? <Line data={lineData} height={130} options={optionsEstm} /> : null}
         {estimate ? <span style={{ fontSize: 10 }}>Current Qtr Estimate (dashed line): <b style={{ color: 'crimson' }}>{estimate}</b></span> : null}
+        {quarterlyData ? <Bar options={optionsQuarterly} data={quarterlyData} height={150} /> : null}
         <hr style={{ margin: 1 }} />
-        {yearlyData ? <Bar options={optionsYearly} data={yearlyData} height={130} /> : null}
-        <hr style={{ margin: 1 }} />
-        {quarterlyData ? <Bar options={optionsQuarterly} data={quarterlyData} height={160} /> : null}
+        {yearlyData ? <Bar options={optionsYearly} data={yearlyData} height={150} /> : null}
       </div>
     );
   }

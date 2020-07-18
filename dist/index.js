@@ -65,15 +65,15 @@ var formatNumber2 = function formatNumber2(number) {
   }
 
   if (number > 1000000000) {
-    return (number / 1000000000).toFixed(toFix) + ' b';
+    return (number / 1000000000).toFixed(toFix);
   }
 
   if (number > 1000000) {
-    return (number / 1000000).toFixed(toFix) + ' m';
+    return (number / 1000000).toFixed(toFix);
   }
 
   if (number > 1000) {
-    return (number / 1000).toFixed(toFix) + ' k';
+    return (number / 1000).toFixed(toFix);
   }
 
   return number;
@@ -395,7 +395,7 @@ function (_React$Component) {
           return d.year;
         }),
         datasets: [{
-          label: "Earnings",
+          label: "Yearly Earnings (".concat(unit, ")"),
           type: 'line',
           fill: false,
           lineTension: 0,
@@ -417,7 +417,7 @@ function (_React$Component) {
             return d.ni;
           })
         }, {
-          label: "Revenue (".concat(unit, ")"),
+          label: "Annual Revenue (".concat(unit, ")"),
           type: 'bar',
           lineTension: 0,
           backgroundColor: '#368BC1',
@@ -434,54 +434,6 @@ function (_React$Component) {
           pointHitRadius: 6,
           yAxisID: 'revenue',
           data: yearly.map(function (d) {
-            return d.rev;
-          })
-        }]
-      };
-      var quarterlyData = {
-        labels: quarterly.map(function (d) {
-          return d.reportDate;
-        }),
-        datasets: [{
-          type: 'line',
-          fill: false,
-          label: "Earnings",
-          lineTension: 0,
-          borderWidth: 0,
-          backgroundColor: 'orange',
-          borderColor: 'orange',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'earnings',
-          data: quarterly.map(function (d) {
-            return d.ni;
-          })
-        }, {
-          type: 'bar',
-          label: "Revenue (".concat(unit, ")"),
-          lineTension: 0,
-          backgroundColor: '#368BC1',
-          borderColor: '#368BC1',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'revenue',
-          data: quarterly.map(function (d) {
             return d.rev;
           })
         }]
@@ -494,13 +446,15 @@ function (_React$Component) {
         fiscalPeriod: 'est',
         consensusEPS: estimate
       }]);
-      var lineData = {
+      var quarterlyData = {
+        // labels: quarterly.map(d => d.reportDate),
         labels: earningsDataAndEstimate.map(function (d) {
           return d.fiscalPeriod;
         }),
         datasets: [{
           label: 'Actual EPS',
           fill: false,
+          type: 'line',
           lineTension: 0,
           borderWidth: 1,
           backgroundColor: 'orange',
@@ -525,6 +479,7 @@ function (_React$Component) {
         }, {
           label: 'Estimate EPS',
           fill: false,
+          type: 'line',
           lineTension: 0,
           borderWidth: 1,
           backgroundColor: 'rgba(175,14,14,1)',
@@ -546,30 +501,27 @@ function (_React$Component) {
           data: earningsDataAndEstimate.map(function (d) {
             return d.consensusEPS;
           })
+        }, {
+          label: "Revenue (".concat(unit, ")"),
+          type: 'bar',
+          lineTension: 0,
+          backgroundColor: '#368BC1',
+          borderColor: '#368BC1',
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: 'miter',
+          pointBorderColor: 'gray',
+          pointBackgroundColor: 'white',
+          pointBorderWidth: 2,
+          pointHoverRadius: 5,
+          pointHoverBorderWidth: 2,
+          pointRadius: 2,
+          pointHitRadius: 6,
+          yAxisID: 'revenue',
+          data: quarterly.slice(0, earningsDataAndEstimate.length - 1).map(function (d) {
+            return d.rev;
+          })
         }]
-      };
-      var optionsEstm = {
-        legend: {
-          labels: {
-            fontSize: 12,
-            boxWidth: 12
-          }
-        },
-        scales: {
-          xAxes: [{
-            ticks: {
-              fontSize: 10
-            }
-          }],
-          yAxes: [{
-            ticks: {
-              fontSize: 10,
-              callback: function callback(label, index, labels) {
-                return formatNumber(label, 0);
-              }
-            }
-          }]
-        }
       };
       return _react["default"].createElement("div", {
         style: {
@@ -582,11 +534,7 @@ function (_React$Component) {
           color: 'darkred',
           fontWeight: 'bold'
         }
-      }, profile.ticker, " - ", profile.name), earningsData ? _react["default"].createElement(_reactChartjs.Line, {
-        data: lineData,
-        height: 130,
-        options: optionsEstm
-      }) : null, estimate ? _react["default"].createElement("span", {
+      }, profile.ticker, " - ", profile.name), estimate ? _react["default"].createElement("span", {
         style: {
           fontSize: 10
         }
@@ -594,22 +542,18 @@ function (_React$Component) {
         style: {
           color: 'crimson'
         }
-      }, estimate)) : null, _react["default"].createElement("hr", {
+      }, estimate)) : null, quarterlyData ? _react["default"].createElement(_reactChartjs.Bar, {
+        options: optionsQuarterly,
+        data: quarterlyData,
+        height: 150
+      }) : null, _react["default"].createElement("hr", {
         style: {
           margin: 1
         }
       }), yearlyData ? _react["default"].createElement(_reactChartjs.Bar, {
         options: optionsYearly,
         data: yearlyData,
-        height: 130
-      }) : null, _react["default"].createElement("hr", {
-        style: {
-          margin: 1
-        }
-      }), quarterlyData ? _react["default"].createElement(_reactChartjs.Bar, {
-        options: optionsQuarterly,
-        data: quarterlyData,
-        height: 160
+        height: 150
       }) : null);
     }
   }]);
