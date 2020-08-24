@@ -147,7 +147,7 @@ export class Analyst extends React.Component {
       const btnText = copied ? 'Copied' : 'Copy Img';
       return (
         <div className='react-components-show-button'>
-          <img alt={`${profile.ticker} - ${profile.name} analyst opinions`} src={profile.estimate_img.url} style={{ width: '100%' }} />
+          <img alt={`${profile.ticker} - ${profile.name} earnings estimates`} src={profile.estimate_img.url} style={{ width: '100%' }} />
           <CopyToClipboard text={profile.estimate_img.url || ''}
             onCopy={() => this.setState({ copied: true })}
           >
