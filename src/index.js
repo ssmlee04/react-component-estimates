@@ -163,9 +163,9 @@ export class Estimates extends React.Component {
           pointBorderWidth: 1,
           // pointStyle: 'circle',
           pointRadius: 3,
-          pointBackgroundColor: 'rgb(66, 33, 199)',
-          backgroundColor: 'rgb(66, 33, 199)',
-          borderColor: 'rgba(66, 33, 199)',
+          pointBackgroundColor: '#368BC1',
+          backgroundColor: '#368BC1',
+          borderColor: '#368BC1',
           // pointHitRadius: 20,
           data: data.map(d => d.estmiate)
         },
