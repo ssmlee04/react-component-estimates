@@ -95,7 +95,7 @@ export class Estimates extends React.Component {
       scales: {
         xAxes: [ { ticks: {
           autoSkip: false,
-          fontSize: 10
+          fontSize: 8
         }, barPercentage: 0.4 } ],
         yAxes: [
           {
@@ -105,7 +105,7 @@ export class Estimates extends React.Component {
               show: true
             },
             ticks: {
-              fontSize: 10,
+              fontSize: 8,
                 callback: function(label, index, labels) {
                   return formatNumber2(label, 0);
                 }

@@ -173,7 +173,7 @@ function (_React$Component) {
           xAxes: [{
             ticks: {
               autoSkip: false,
-              fontSize: 10
+              fontSize: 8
             },
             barPercentage: 0.4
           }],
@@ -184,7 +184,7 @@ function (_React$Component) {
               show: true
             },
             ticks: {
-              fontSize: 10,
+              fontSize: 8,
               callback: function callback(label, index, labels) {
                 return formatNumber2(label, 0);
               }
