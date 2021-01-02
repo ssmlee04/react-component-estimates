@@ -94,31 +94,7 @@ const calculateMargins = (data) => {
   });
 };
 
-const calculateYearly = (data) => {
-  data = _.sortBy(data.filter(d => d.reportDate), (d) => {
-    return -d.reportDate;
-  }).reverse();
-
-  const years = {};
-  const arr = [];
-  data.forEach((d, i) => {
-    let yy = d.reportDate.slice(0, 4);
-    if (years[yy] === undefined) {
-      years[yy] = arr.length;
-    }
-    arr[years[yy]] = arr[years[yy]] || {};
-    arr[years[yy]].c = arr[years[yy]].c || 0;
-    arr[years[yy]].year = arr[years[yy]].year || yy;
-    arr[years[yy]].ni = arr[years[yy]].ni || 0;
-    arr[years[yy]].ni += d.ni;
-    arr[years[yy]].rev = arr[years[yy]].rev || 0;
-    arr[years[yy]].rev += d.rev;
-    arr[years[yy]].c++;
-  });
-  return arr.filter(d => d.c === 4);
-};
-
-export class Analyst extends React.Component {
+export class Estimates extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -135,20 +111,20 @@ export class Analyst extends React.Component {
   }
 
   render() {
-    const { profile } = this.props;
+    const { profile, imgProp = 'estimates_img', prop = 'earnings_av.data' } = this.props;
     const { copied } = this.state;
     if (!profile) {
       return (
         <div style={{ fontSize: 14 }}>Not available at this time... </div>
       );
     }
-    if (profile.estimate_img && profile.estimate_img.url) {
+    if (profile[imgProp] && profile[imgProp].url) {
       const btnClass = copied ? 'react-components-show-url btn btn-sm btn-danger disabled font-10' : 'react-components-show-url btn btn-sm btn-warning font-10';
       const btnText = copied ? 'Copied' : 'Copy Img';
       return (
         <div className='react-components-show-button'>
-          <img alt={`${profile.ticker} - ${profile.name} earnings estimates`} src={profile.estimate_img.url} style={{ width: '100%' }} />
-          <CopyToClipboard text={profile.estimate_img.url || ''}
+          <img alt={`${profile.ticker} - ${profile.name} earnings estimates`} src={profile[imgProp].url} style={{ width: '100%' }} />
+          <CopyToClipboard text={profile[imgProp].url || ''}
             onCopy={() => this.setState({ copied: true })}
           >
             <button className={btnClass} value={btnText}>{btnText}</button>
@@ -156,48 +132,21 @@ export class Analyst extends React.Component {
         </div>
       );
     }
-    if (!profile) {
-      return (
-        <div className='font-12'>Not available at this time... </div>
-      );
-    }
-    let data = _.get(profile, 'income_and_revenue.data', []);
+    let data = _.get(profile, prop, []);
     if (!data || !data.length) {
       return (
-        <div className='font-12'>Not available at this time... </div>
+        <div className='font-8'>Not available at this time... </div>
       );
     }
     data = data.map(d => {
-      d.reportDate = d.reportDate.replace(/-/g, '').slice(0, 6);
+      d.fiscalDate = d.fiscalDate.replace(/-/g, '').slice(0, 6);
       return d;
-    });
-    const yearly = calculateYearly(data);
-    const quarterly = calculateMargins(data.slice(0, 12));
-    const minQuarterly = quarterly.reduce((t, d) => {
-      return Math.min(t, d.rev);
-    }, 9999999999999999) / 2;
-    const minYearly = yearly.reduce((t, d) => {
-      return Math.min(t, d.rev);
-    }, 9999999999999999) / 2;
-    const unit = data && data[0].unit;
+    }).slice(0, 12);
 
-    var optionsQuarterly = {
-      tooltips: {
-        callbacks: {
-                label: function(tooltipItem, data) {
-                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
-
-                    if (label) {
-                        label += ': ';
-                    }
-                    label += formatNumber(tooltipItem.yLabel);
-                    return label;
-                }
-            }
-      },
+    var options = {
       legend: {
         labels: {
-          fontSize: 12,
+          fontSize: 8,
           boxWidth: 12,
         }
       },
@@ -210,11 +159,6 @@ export class Analyst extends React.Component {
           {
             type: 'linear',
             display: true,
-            position: 'right',
-            id: 'earnings',
-            gridLines: {
-              display: false
-            },
             labels: {
               show: true
             },
@@ -226,150 +170,32 @@ export class Analyst extends React.Component {
                 }
             },
           },
-          {
-            type: 'linear',
-            display: true,
-            position: 'left',
-            id: 'revenue',
-            labels: {
-              show: true
-            },
-            ticks: {
-              fontSize: 10,
-              min: minQuarterly,
-              callback: function(label, index, labels) {
-                return formatNumber(label, 0);
-              }
-            },
-          },
         ]
       }
     };
 
-    var optionsYearly = {
-      tooltips: {
-        callbacks: {
-                label: function(tooltipItem, data) {
-                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
-
-                    if (label) {
-                        label += ': ';
-                    }
-                    label += formatNumber(tooltipItem.yLabel);
-                    return label;
-                }
-            }
-      },
-      legend: {
-        labels: {
-          fontSize: 12,
-          boxWidth: 12,
-        }
-      },
-      scales: {
-        xAxes: [ { ticks: {
-          autoSkip: false,
-          fontSize: 10
-        }, barPercentage: 0.2 } ],
-        yAxes: [
-          {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            id: 'earnings',
-            gridLines: {
-              display: false
-            },
-            labels: {
-              show: true
-            },
-            ticks: {
-              fontSize: 10,
-                fontColor: 'orange',
-                callback: function(label, index, labels) {
-                  return formatNumber2(label, 0);
-                }
-            },
-          },
-          {
-            type: 'linear',
-            display: true,
-            position: 'left',
-            id: 'revenue',
-            labels: {
-              show: true
-            },
-            ticks: {
-              fontSize: 10,
-              min: minYearly,
-              callback: function(label, index, labels) {
-                return formatNumber(label, 0);
-              }
-            },
-          },
-        ]
-      }
-    };
-
-    const yearlyData = {
-      labels: yearly.map(d => d.year),
-      datasets: [
-        {
-          label: `Yearly Earnings (${unit})`,
-          type:'line',
-          fill: false,
-          lineTension: 0,
-          borderWidth: 0,
-          backgroundColor: 'orange',
-          borderColor: 'orange',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'earnings',
-          data: yearly.map(d => d.ni)
-        },
-        {
-          label: `Annual Revenue (${unit})`,
-          type:'bar',
-          lineTension: 0,
-          backgroundColor: '#368BC1',
-          borderColor: '#368BC1',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'revenue',
-          data: yearly.map(d => d.rev)
-        },
-      ]
-    };
-
-    const estimate = _.get(profile, 'estimate.data.consensusEPS', null);
-    const earningsData = JSON.parse(JSON.stringify(_.get(profile, 'earnings.data', []))).reverse();
-    const earningsDataAndEstimate = earningsData.concat([{ fiscalPeriod: 'est', consensusEPS: estimate }]);
+    const estimatesLastFiscalDate = _.last(data).fiscalDate
+    const CurrentEstimate = _.get(profile, 'estimates_yh.earnings_0q', {});
+    const CurrentEstimateFiscalDate = CurrentEstimate.endDate && CurrentEstimate.endDate.replace(/-/g, '').slice(0, 6);
+    let CurrentEstimateEps;
+    if (CurrentEstimateFiscalDate > estimatesLastFiscalDate) {
+      CurrentEstimateEps = CurrentEstimate.avg
+      data = data.concat([{
+        eps: -0.05,
+        // estmiate: -0.04,
+        fiscalDate: CurrentEstimateFiscalDate,
+      }])
+    }
 
     const quarterlyData = {
       // labels: quarterly.map(d => d.reportDate),
-      labels: earningsDataAndEstimate.map(d => d.fiscalPeriod),
+      labels: data.map(d => d.fiscalDate),
       datasets: [
         {
           label: 'Actual EPS',
           fill: false,
           type:'line',
-          lineTension: 0,
+          lineTension: 0.3,
           borderWidth: 1,
           backgroundColor: 'orange',
           borderColor: 'orange',
@@ -387,13 +213,13 @@ export class Analyst extends React.Component {
           pointStyle: 'rectRot',
           pointRadius: 2,
           pointHitRadius: 20,
-          data: earningsData.map(d => d.actualEPS)
+          data: data.map(d => d.eps)
         },
         {
           label: 'Estimate EPS',
           fill: false,
           type:'line',
-          lineTension: 0,
+          lineTension: 0.3,
           borderWidth: 1,
           backgroundColor: 'rgba(175,14,14,1)',
           borderColor: 'rgba(175,14,14,1)',
@@ -411,40 +237,20 @@ export class Analyst extends React.Component {
           pointStyle: 'circle',
           pointRadius: 2,
           pointHitRadius: 20,
-          data: earningsDataAndEstimate.map(d => d.consensusEPS)
-        },
-        {
-          label: `Revenue (${unit})`,
-          type:'bar',
-          lineTension: 0,
-          backgroundColor: '#368BC1',
-          borderColor: '#368BC1',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'gray',
-          pointBackgroundColor: 'white',
-          pointBorderWidth: 2,
-          pointHoverRadius: 5,
-          pointHoverBorderWidth: 2,
-          pointRadius: 2,
-          pointHitRadius: 6,
-          yAxisID: 'revenue',
-          data: quarterly.slice(0, earningsDataAndEstimate.length - 1).map(d => d.rev)
+          data: data.map(d => d.estmiate)
         },
       ]
     };
 
     return (
-      <div style={{ width: '100%', padding: 5, fontSize: 14 }}>
+      <div style={{ width: '100%', padding: 5, fontSize: 8 }}>
         <div style={{ color: 'darkred', fontWeight: 'bold' }}>{profile.ticker} - {profile.name}</div>
-        {estimate ? <span style={{ fontSize: 10 }}>Current Qtr Estimate (dashed line): <b style={{ color: 'crimson' }}>{estimate}</b></span> : null}
-        {quarterlyData ? <Bar options={optionsQuarterly} data={quarterlyData} height={150} /> : null}
-        <hr style={{ margin: 1 }} />
-        {yearlyData ? <Bar options={optionsYearly} data={yearlyData} height={150} /> : null}
+        {CurrentEstimateEps ? <span style={{ fontSize: 8 }}>Current Qtr Estimate (dashed line): <b style={{ color: 'crimson' }}>{CurrentEstimateEps}</b></span> : null}
+        {quarterlyData ? <Bar options={options} data={quarterlyData} height={180} /> : null}
+        <div style={{ fontSize: 8, color: 'gray' }}>Generated by <span style={{ color: 'darkred' }}>@earningsfly</span> with <span style={{ fontSize: 16, color: 'red' }}>🚀</span></div>
       </div>
     );
   }
 }
 
-export default Analyst;
+export default Estimates;
