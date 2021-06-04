@@ -13,8 +13,6 @@ var _reactChartjs = require("react-chartjs-2");
 
 var _reactCopyToClipboard = require("react-copy-to-clipboard");
 
-require("./../index.css");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -95,15 +93,6 @@ function (_React$Component) {
   }
 
   _createClass(Estimates, [{
-    key: "shouldComponentUpdate",
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      var profile = this.props.profile;
-      if (!profile) return true;
-      if (nextState.copied) return true;
-      if (profile.ticker !== nextProps.profile.ticker) return true;
-      return false;
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -113,19 +102,21 @@ function (_React$Component) {
           _this$props$imgProp = _this$props.imgProp,
           imgProp = _this$props$imgProp === void 0 ? 'estimates_av_img' : _this$props$imgProp,
           _this$props$prop = _this$props.prop,
-          prop = _this$props$prop === void 0 ? 'earnings_av.data' : _this$props$prop;
+          prop = _this$props$prop === void 0 ? 'earnings_av.data' : _this$props$prop,
+          _this$props$theme = _this$props.theme,
+          theme = _this$props$theme === void 0 ? 'light' : _this$props$theme;
       var copied = this.state.copied;
 
       if (!profile) {
         return _react["default"].createElement("div", {
           style: {
-            fontSize: 8
+            fontSize: 12
           }
         }, "Not available at this time... ");
       }
 
       if (profile[imgProp] && profile[imgProp].url) {
-        var btnClass = copied ? 'react-components-show-url btn btn-sm btn-danger disabled font-10' : 'react-components-show-url btn btn-sm btn-warning font-10';
+        var btnClass = copied ? 'react-components-show-url btn btn-sm btn-danger disabled font-12' : 'react-components-show-url btn btn-sm btn-warning font-12';
         var btnText = copied ? 'Copied' : 'Copy Img';
         return _react["default"].createElement("div", {
           className: "react-components-show-button"
@@ -162,18 +153,21 @@ function (_React$Component) {
       }).sort(function (a, b) {
         return a.fiscalDate > b.fiscalDate;
       }).slice(-12);
+      var fontColor = theme === 'light' ? '#222222' : '#dddddd';
       var options = {
         legend: {
           labels: {
-            fontSize: 8,
+            fontColor: fontColor,
+            fontSize: 12,
             boxWidth: 12
           }
         },
         scales: {
           xAxes: [{
             ticks: {
+              fontColor: fontColor,
               autoSkip: false,
-              fontSize: 8
+              fontSize: 12
             },
             barPercentage: 0.4
           }],
@@ -184,7 +178,8 @@ function (_React$Component) {
               show: true
             },
             ticks: {
-              fontSize: 8,
+              fontColor: fontColor,
+              fontSize: 12,
               callback: function callback(label, index, labels) {
                 return formatNumber2(label, 0);
               }
@@ -258,46 +253,42 @@ function (_React$Component) {
       return _react["default"].createElement("div", {
         style: {
           width: '100%',
-          padding: 5,
-          fontSize: 8
-        }
+          padding: 5
+        },
+        className: "theme-black-".concat(theme)
       }, _react["default"].createElement("div", {
+        className: "theme-darkred-".concat(theme),
         style: {
-          color: 'darkred',
           fontWeight: 'bold'
         }
-      }, profile.ticker, " - ", profile.name, _react["default"].createElement("span", {
-        style: {
-          marginLeft: 5,
-          color: 'green'
-        }
+      }, profile.ticker, " - ", profile.name, "\xA0", _react["default"].createElement("span", {
+        className: "theme-green-".concat(theme)
       }, "EPS Estimates")), CurrentEstimateEps ? _react["default"].createElement("span", {
         style: {
-          fontSize: 8
+          fontSize: 12
         }
       }, "Current Qtr Estimate (dashed line): ", _react["default"].createElement("b", {
-        style: {
-          color: 'crimson'
-        }
+        className: "theme-red-".concat(theme)
       }, CurrentEstimateEps)) : null, quarterlyData ? _react["default"].createElement(_reactChartjs.Bar, {
         options: options,
         data: quarterlyData,
         height: 180
       }) : null, _react["default"].createElement("div", {
         style: {
-          fontSize: 8,
-          color: 'gray'
+          fontSize: 12,
+          padding: 5,
+          paddingTop: 2
         }
-      }, "Generated by ", _react["default"].createElement("span", {
-        style: {
-          color: 'darkred'
-        }
+      }, "Generated by ", _react["default"].createElement("a", {
+        href: "https://twitter.com/earningsfly",
+        target: "_blank",
+        className: "theme-darkred-".concat(theme)
       }, "@earningsfly"), " with ", _react["default"].createElement("span", {
         style: {
           fontSize: 16,
           color: 'red'
         }
-      }, "\uD83D\uDE80")));
+      }, "\u2764\uFE0F")));
     }
   }]);
 
