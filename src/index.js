@@ -112,7 +112,7 @@ export class Estimates extends React.Component {
     };
 
     const estimatesLastFiscalDate = _.last(data).fiscalDate
-    const CurrentEstimate = _.get(profile, 'estimates_yh.earnings_0q', {});
+    const CurrentEstimate = _.get(profile, 'estimates_yh.earnings_0q', {}) || {};
     const CurrentEstimateFiscalDate = CurrentEstimate.endDate && CurrentEstimate.endDate.replace(/-/g, '').slice(0, 6);
     let CurrentEstimateEps;
     if (CurrentEstimateFiscalDate > estimatesLastFiscalDate) {

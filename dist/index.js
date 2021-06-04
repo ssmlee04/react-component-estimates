@@ -190,8 +190,7 @@ function (_React$Component) {
 
       var estimatesLastFiscalDate = _lodash["default"].last(data).fiscalDate;
 
-      var CurrentEstimate = _lodash["default"].get(profile, 'estimates_yh.earnings_0q', {});
-
+      var CurrentEstimate = _lodash["default"].get(profile, 'estimates_yh.earnings_0q', {}) || {};
       var CurrentEstimateFiscalDate = CurrentEstimate.endDate && CurrentEstimate.endDate.replace(/-/g, '').slice(0, 6);
       var CurrentEstimateEps;
 
