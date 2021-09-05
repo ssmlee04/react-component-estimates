@@ -78,6 +78,7 @@ export class Estimates extends React.Component {
     }).sort((a, b) => a.fiscalDate > b.fiscalDate).slice(-12);
 
     const fontColor = theme === 'light' ? '#222222' : '#dddddd';
+    const gridColor = theme === 'light' ? 'rgba(80, 80, 80, 0.1)' : 'rgba(255, 255, 255, 0.2)';
     var options = {
       legend: {
         labels: {
@@ -87,17 +88,25 @@ export class Estimates extends React.Component {
         }
       },
       scales: {
-        xAxes: [ { ticks: {
-          fontColor,
-          autoSkip: false,
-          fontSize: 12
-        }, barPercentage: 0.4 } ],
+        xAxes: [ { 
+          ticks: {
+            fontColor,
+            autoSkip: false,
+            fontSize: 12
+          }, 
+          barPercentage: 0.4,
+          gridLines: {
+            color: gridColor
+          } } ],
         yAxes: [
           {
             type: 'linear',
             display: true,
             labels: {
               show: true
+            },
+            gridLines: {
+              color: gridColor
             },
             ticks: {
               fontColor,
@@ -139,7 +148,7 @@ export class Estimates extends React.Component {
           borderJoinStyle: 'miter',
           pointBorderWidth: 1.5,
           pointStyle: 'rectRot',
-          pointRadius: 4,
+          pointRadius: 2,
           pointBackgroundColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgba(255, 99, 132)',
@@ -158,7 +167,7 @@ export class Estimates extends React.Component {
           borderJoinStyle: 'miter',
           pointBorderWidth: 1,
           // pointStyle: 'circle',
-          pointRadius: 3,
+          pointRadius: 2,
           pointBackgroundColor: '#368BC1',
           backgroundColor: '#368BC1',
           borderColor: '#368BC1',
@@ -169,7 +178,7 @@ export class Estimates extends React.Component {
     };
 
     return (
-      <div style={{ width: '100%', padding: 5 }} className={`theme-black-${theme}`}>
+      <div style={{ width: '100%', padding: 5, fontSize: 12 }}>
         <div className={`theme-darkred-${theme}`} style={{ fontWeight: 'bold' }}>{profile.ticker} - {profile.name}&nbsp;<span className={`theme-green-${theme}`}>EPS Estimates</span></div>
         {CurrentEstimateEps ? <span style={{ fontSize: 12 }}>Current Qtr Estimate (dashed line): <b className={`theme-red-${theme}`}>{CurrentEstimateEps}</b></span> : null}
         {quarterlyData ? <Bar options={options} data={quarterlyData} height={180} /> : null}

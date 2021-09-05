@@ -154,6 +154,7 @@ function (_React$Component) {
         return a.fiscalDate > b.fiscalDate;
       }).slice(-12);
       var fontColor = theme === 'light' ? '#222222' : '#dddddd';
+      var gridColor = theme === 'light' ? 'rgba(80, 80, 80, 0.1)' : 'rgba(255, 255, 255, 0.2)';
       var options = {
         legend: {
           labels: {
@@ -169,13 +170,19 @@ function (_React$Component) {
               autoSkip: false,
               fontSize: 12
             },
-            barPercentage: 0.4
+            barPercentage: 0.4,
+            gridLines: {
+              color: gridColor
+            }
           }],
           yAxes: [{
             type: 'linear',
             display: true,
             labels: {
               show: true
+            },
+            gridLines: {
+              color: gridColor
             },
             ticks: {
               fontColor: fontColor,
@@ -219,7 +226,7 @@ function (_React$Component) {
           borderJoinStyle: 'miter',
           pointBorderWidth: 1.5,
           pointStyle: 'rectRot',
-          pointRadius: 4,
+          pointRadius: 2,
           pointBackgroundColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgba(255, 99, 132)',
@@ -239,7 +246,7 @@ function (_React$Component) {
           borderJoinStyle: 'miter',
           pointBorderWidth: 1,
           // pointStyle: 'circle',
-          pointRadius: 3,
+          pointRadius: 2,
           pointBackgroundColor: '#368BC1',
           backgroundColor: '#368BC1',
           borderColor: '#368BC1',
@@ -252,9 +259,9 @@ function (_React$Component) {
       return _react["default"].createElement("div", {
         style: {
           width: '100%',
-          padding: 5
-        },
-        className: "theme-black-".concat(theme)
+          padding: 5,
+          fontSize: 12
+        }
       }, _react["default"].createElement("div", {
         className: "theme-darkred-".concat(theme),
         style: {
